@@ -6,7 +6,7 @@ Created on 2019年7月15日
 @author: Irony
 @site: https://pyqt5.com https://github.com/892768447
 @email: 892768447@qq.com
-@file: CustomTitleBar.CustomTitleBar
+@file: CTitleBar.CTitleBar
 @description: 自定义标题栏
 """
 
@@ -20,12 +20,12 @@ __Author__ = 'Irony'
 __Copyright__ = 'Copyright (c) 2019'
 
 
-class CustomTitleBar(QWidget):
+class CTitleBar(QWidget):
 
     Radius = 38
 
     def __init__(self, *args, title='', **kwargs):
-        super(CustomTitleBar, self).__init__(*args, **kwargs)
+        super(CTitleBar, self).__init__(*args, **kwargs)
         self.setupUi()
         # 支持设置背景
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -63,7 +63,7 @@ class CustomTitleBar(QWidget):
                     self._root.layout().setContentsMargins(0, 0, 0, 0)
                 elif hasattr(self, '_oldMargins'):
                     self._root.layout().setContentsMargins(*self._oldMargins)
-        return super(CustomTitleBar, self).eventFilter(target, event)
+        return super(CTitleBar, self).eventFilter(target, event)
 
     def mouseDoubleClickEvent(self, event):
         """双击标题栏最大化
@@ -125,7 +125,7 @@ class CustomTitleBar(QWidget):
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
         # 标题
         self.labelTitle = QLabel(self, alignment=Qt.AlignCenter)
-        self.labelTitle.setObjectName('CustomTitleBar_labelTitle')
+        self.labelTitle.setObjectName('CTitleBar_labelTitle')
         layout.addWidget(self.labelTitle)
         layout.addItem(QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
@@ -135,6 +135,6 @@ class CustomTitleBar(QWidget):
             button = QPushButton(text, self, font=QFont('Webdings'))
             button.setMinimumSize(self.Radius, self.Radius)
             button.setMaximumSize(self.Radius, self.Radius)
-            button.setObjectName('CustomTitleBar_%s' % name)
+            button.setObjectName('CTitleBar_%s' % name)
             setattr(self, name, button)
             layout.addWidget(button)
