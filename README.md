@@ -1,5 +1,7 @@
 # Components - 组件
 
+[![codebeat badge](https://codebeat.co/badges/204bac2f-e1d0-42f4-824e-a28955cf34a5)](https://codebeat.co/projects/github-com-pyqt5-customwidgets-master)
+
 PyQt Custom Widgets - PyQt 自定义控件
 
 # 目录
