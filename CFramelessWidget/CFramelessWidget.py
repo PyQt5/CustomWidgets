@@ -6,12 +6,12 @@ Created on 2019年7月16日
 @author: Irony
 @site: https://pyqt5.com https://github.com/892768447
 @email: 892768447@qq.com
-@file: CFramelessWidget.CFramelessWidget
+@file: CFramelessBase.CFramelessBase
 @description: 无边框窗口
 """
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QPen, QColor, QEnterEvent
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QDialog
 
 
 __Author__ = 'Irony'
@@ -27,12 +27,13 @@ LEFTBOTTOM = LEFT | BOTTOM
 RIGHTBOTTOM = RIGHT | BOTTOM
 
 
-class CFramelessWidget(QWidget):
+class CFramelessBase:
 
     Margins = 4
+    BaseClass = QWidget
 
     def __init__(self, *args, **kwargs):
-        super(CFramelessWidget, self).__init__(*args, **kwargs)
+        super(CFramelessBase, self).__init__(*args, **kwargs)
         self.dragParams = {'type': 0, 'x': 0,
                            'y': 0, 'margin': 0, 'draging': False}
         self.originalCusor = None
@@ -42,12 +43,19 @@ class CFramelessWidget(QWidget):
         # 设置无边框
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
 
+    def isResizable(self):
+        """是否可调整
+        """
+        return self.minimumSize() != self.maximumSize()
+
     def getEdge(self, pos):
         """返回点与边距接触的边的方向
         :param pos:
         """
         rect = self.rect()
         edge = 0
+        if not self.isResizable():
+            return edge
         if pos.x() <= rect.left() + self.Margins:
             edge |= LEFT
         elif pos.x() >= rect.right() - self.Margins:
@@ -79,12 +87,12 @@ class CFramelessWidget(QWidget):
         """
         if isinstance(event, QEnterEvent):
             self.setCursor(self.originalCusor or Qt.ArrowCursor)
-        return super(CFramelessWidget, self).eventFilter(obj, event)
+        return self.BaseClass.eventFilter(self, obj, event)
 
     def paintEvent(self, event):
         """由于是全透明背景窗口,重绘事件中绘制透明度为1的难以发现的边框,用于调整窗口大小
         """
-        super(CFramelessWidget, self).paintEvent(event)
+        self.BaseClass.paintEvent(self, event)
         painter = QPainter(self)
         painter.setPen(QPen(QColor(255, 255, 255, 1), 2 * self.Margins))
         painter.drawRect(self.rect())
@@ -102,12 +110,14 @@ class CFramelessWidget(QWidget):
             for w in self.children():
                 if isinstance(w, QWidget):
                     w.installEventFilter(self)
-        super(CFramelessWidget, self).showEvent(event)
+        self.BaseClass.showEvent(self, event)
 
     def mousePressEvent(self, event):
         """鼠标按下设置标志
         :param event:
         """
+        if not self.isResizable():
+            return
         self.dragParams['x'] = event.x()
         self.dragParams['y'] = event.y()
         self.dragParams['globalX'] = event.globalX()
@@ -129,7 +139,7 @@ class CFramelessWidget(QWidget):
         """鼠标移动用于设置鼠标样式或者调整窗口大小
         :param event:
         """
-        if self.isMaximized() or self.isFullScreen():
+        if self.isMaximized() or self.isFullScreen() or not self.isResizable():
             return
 
         # 判断鼠标类型
@@ -168,3 +178,13 @@ class CFramelessWidget(QWidget):
                 return
 
             self.setGeometry(x, y, width, height)
+
+
+class CFramelessWidget(QWidget, CFramelessBase):
+
+    BaseClass = QWidget
+
+
+class CFramelessDialog(QDialog, CFramelessBase):
+
+    BaseClass = QDialog

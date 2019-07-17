@@ -12,7 +12,7 @@ Created on 2019年7月16日
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLineEdit
 
-from CFramelessWidget.CFramelessWidget import CFramelessWidget
+from CFramelessWidget.CFramelessWidget import CFramelessWidget, CFramelessDialog
 from CTitleBar.CTitleBar import CTitleBar
 
 
@@ -20,10 +20,10 @@ __Author__ = 'Irony'
 __Copyright__ = 'Copyright (c) 2019'
 
 
-class TestCFramelessWidget(CFramelessWidget):
+class TestCFramelessBase:
 
     def __init__(self, *args, **kwargs):
-        super(TestCFramelessWidget, self).__init__(*args, **kwargs)
+        super(TestCFramelessBase, self).__init__(*args, **kwargs)
         self.resize(500, 400)
         layout = QVBoxLayout(self)
         layout.setSpacing(0)
@@ -33,6 +33,14 @@ class TestCFramelessWidget(CFramelessWidget):
         # 底部空白占位
         layout.addWidget(
             QWidget(self, objectName='bottomWidget', cursor=Qt.PointingHandCursor))
+
+
+class TestCFramelessWidget(CFramelessWidget, TestCFramelessBase):
+    pass
+
+
+class TestCFramelessDialog(CFramelessDialog, TestCFramelessBase):
+    pass
 
 
 # 标题栏样式
@@ -91,4 +99,7 @@ if __name__ == '__main__':
     app.setStyleSheet(Style)
     w = TestCFramelessWidget()
     w.show()
+    w2 = TestCFramelessDialog()
+    w2.setWindowTitle('模态')
+    w2.exec_()
     sys.exit(app.exec_())

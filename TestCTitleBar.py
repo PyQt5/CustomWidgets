@@ -90,4 +90,18 @@ if __name__ == '__main__':
     app.setStyleSheet(Style)
     w = TestCTitleBar()
     w.show()
+
+    # 模态属性
+    w1 = TestCTitleBar()
+    w1.setWindowTitle('模态属性')
+    w1.setWindowModality(Qt.ApplicationModal)
+    w1.show()
+    
+    # 不可调整大小
+    w2 = TestCTitleBar()
+    w2.setWindowTitle('不可调整大小')
+    w2.setMinimumSize(400,400)
+    w2.setMaximumSize(400, 400)
+    w2.show()
     sys.exit(app.exec_())
+

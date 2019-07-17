@@ -42,12 +42,28 @@ class CTitleBar(QWidget):
             self.testWindowFlags(Qt.WindowMaximizeButtonHint))
 
         # 绑定信号
+        self._root.windowTitleChanged.connect(self.setWindowTitle)
         self.buttonMinimum.clicked.connect(self._root.showMinimized)
         self.buttonMaximum.clicked.connect(self._root.showMaximized)
         self.buttonNormal.clicked.connect(self._root.showNormal)
         self.buttonClose.clicked.connect(self._root.close)
         # 对父控件(或者自身)安装事件过滤器
         self._root.installEventFilter(self)
+
+    def isResizable(self):
+        """是否可调整
+        """
+        return self._root.minimumSize() != self._root.maximumSize()
+
+    def showEvent(self, event):
+        """界面可调整大小时才显示最大化和还原按钮
+        :param event:
+        """
+        super(CTitleBar, self).showEvent(event)
+        visible = self.isResizable()
+        self.buttonMaximum.setVisible(visible)
+        # 如果是模态则隐藏最小化
+        self.buttonMinimum.setVisible(not self._root.isModal())
 
     def eventFilter(self, target, event):
         if isinstance(event, QWindowStateChangeEvent):
@@ -69,7 +85,7 @@ class CTitleBar(QWidget):
         """双击标题栏最大化
         :param event:
         """
-        if not self.testWindowFlags(Qt.WindowMinMaxButtonsHint):
+        if not self.testWindowFlags(Qt.WindowMinMaxButtonsHint) or not self.isResizable():
             return
         if self._root.isMaximized():
             self._root.showNormal()
