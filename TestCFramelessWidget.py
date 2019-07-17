@@ -29,7 +29,7 @@ class TestCFramelessWidget(CFramelessWidget):
         layout.setSpacing(0)
         # 添加自定义标题栏
         layout.addWidget(CTitleBar(self, title='CTitleBar'))
-        layout.addWidget(QLineEdit(self))
+        layout.addWidget(QLineEdit('输入框', self))
         # 底部空白占位
         layout.addWidget(
             QWidget(self, objectName='bottomWidget', cursor=Qt.PointingHandCursor))

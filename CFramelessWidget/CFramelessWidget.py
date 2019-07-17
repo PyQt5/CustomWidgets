@@ -10,18 +10,21 @@ Created on 2019年7月16日
 @description: 无边框窗口
 """
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainter, QPen, QColor, QRegion, QEnterEvent
+from PyQt5.QtGui import QPainter, QPen, QColor, QEnterEvent
 from PyQt5.QtWidgets import QWidget
 
 
 __Author__ = 'Irony'
 __Copyright__ = 'Copyright (c) 2019'
 
-OUTSIDE = 0
 LEFT = 1
 TOP = 2
 RIGHT = 4
 BOTTOM = 8
+LEFTTOP = LEFT | TOP
+RIGHTTOP = RIGHT | TOP
+LEFTBOTTOM = LEFT | BOTTOM
+RIGHTBOTTOM = RIGHT | BOTTOM
 
 
 class CFramelessWidget(QWidget):
@@ -30,9 +33,8 @@ class CFramelessWidget(QWidget):
 
     def __init__(self, *args, **kwargs):
         super(CFramelessWidget, self).__init__(*args, **kwargs)
-        self.dragging = False
-        self.dragpos = None
-        self.dragedge = 0
+        self.dragParams = {'type': 0, 'x': 0,
+                           'y': 0, 'margin': 0, 'draging': False}
         self.originalCusor = None
         self.setMouseTracking(True)
         # 设置背景透明
@@ -71,7 +73,7 @@ class CFramelessWidget(QWidget):
             cursor = Qt.SizeBDiagCursor
         if cursor and cursor != self.cursor():
             self.setCursor(cursor)
-    
+
     def eventFilter(self, obj, event):
         """事件过滤器,用于解决鼠标进入其它控件后还原为标准鼠标样式
         """
@@ -106,17 +108,22 @@ class CFramelessWidget(QWidget):
         """鼠标按下设置标志
         :param event:
         """
-        if event.button() == Qt.LeftButton:
-            self.dragging = True
-            self.dragpos = event.pos()
-            self.dragedge = self.getEdge(event.pos())
+        self.dragParams['x'] = event.x()
+        self.dragParams['y'] = event.y()
+        self.dragParams['globalX'] = event.globalX()
+        self.dragParams['globalY'] = event.globalY()
+        self.dragParams['width'] = self.width()
+        self.dragParams['height'] = self.height()
+        if event.button() == Qt.LeftButton and self.dragParams['type'] != 0 \
+                and not self.isMaximized() and not self.isFullScreen():
+            self.dragParams['draging'] = True
 
     def mouseReleaseEvent(self, event):
         """释放鼠标还原光标样式
         :param event:
         """
-        if self.dragging and event.button() == Qt.LeftButton:
-            self.dragging = False
+        self.dragParams['draging'] = False
+        self.dragParams['type'] = 0
 
     def mouseMoveEvent(self, event):
         """鼠标移动用于设置鼠标样式或者调整窗口大小
@@ -124,28 +131,42 @@ class CFramelessWidget(QWidget):
         """
         if self.isMaximized() or self.isFullScreen():
             return
-        if self.dragging:
-            # 拖动调整大小
-            pos = event.pos() - self.dragpos
-            self.dragpos = event.pos()
-            geometry = self.geometry().adjusted(
-                pos.x() if self.dragedge & LEFT else 0,
-                pos.y() if self.dragedge & TOP else 0,
-                pos.x() if self.dragedge & RIGHT else 0,
-                pos.y() if self.dragedge & BOTTOM else 0
-            )
-            if geometry.isValid() and geometry.width() > self.minimumWidth() \
-                    and geometry.height() > self.minimumHeight() and not geometry.contains(event.pos()):
-                print(geometry.contains(event.pos()), geometry,
-                      event.pos(), self.minimumSize())
-                self.setGeometry(geometry)
-            return
-        radius = self.Margins - 1
-        rect = self.rect().adjusted(radius, radius, -radius, -radius)
-        region = QRegion(self.rect()).subtracted(QRegion(rect))
-        if not region.contains(event.pos()):
-            # 鼠标不在可调整区域则需要还原光标样式
-            self.setCursor(self.originalCusor)
-        else:
-            self.dragedge = self.getEdge(event.pos())
-            self.adjustCursor(self.dragedge)
+
+        # 判断鼠标类型
+        cursorType = self.dragParams['type']
+        if not self.dragParams['draging']:
+            cursorType = self.dragParams['type'] = self.getEdge(event.pos())
+            self.adjustCursor(cursorType)
+
+        # 判断窗口拖动
+        if self.dragParams['draging']:
+            x = self.x()
+            y = self.y()
+            width = self.width()
+            height = self.height()
+
+            if cursorType & TOP == TOP:
+                y = event.globalY() - self.dragParams['margin']
+                height = self.dragParams['height'] + \
+                    self.dragParams['globalY'] - event.globalY()
+            if cursorType & BOTTOM == BOTTOM:
+                height = self.dragParams['height'] - \
+                    self.dragParams['globalY'] + event.globalY()
+            if cursorType & LEFT == LEFT:
+                x = event.globalX() - self.dragParams['margin']
+                width = self.dragParams['width'] + \
+                    self.dragParams['globalX'] - event.globalX()
+            if cursorType & RIGHT == RIGHT:
+                width = self.dragParams['width'] - \
+                    self.dragParams['globalX'] + event.globalX()
+
+            if width < self.minimumWidth():
+                width = self.minimumWidth()
+            elif width > self.maximumWidth():
+                width = self.maximumWidth()
+            if height < self.minimumHeight():
+                height = self.minimumHeight()
+            elif height > self.maximumHeight():
+                height = self.maximumHeight()
+
+            self.setGeometry(x, y, width, height)
