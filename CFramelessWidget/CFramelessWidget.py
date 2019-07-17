@@ -160,13 +160,11 @@ class CFramelessWidget(QWidget):
                 width = self.dragParams['width'] - \
                     self.dragParams['globalX'] + event.globalX()
 
-            if width < self.minimumWidth():
-                width = self.minimumWidth()
-            elif width > self.maximumWidth():
-                width = self.maximumWidth()
-            if height < self.minimumHeight():
-                height = self.minimumHeight()
-            elif height > self.maximumHeight():
-                height = self.maximumHeight()
+            minw = self.minimumWidth()
+            maxw = self.maximumWidth()
+            minh = self.minimumHeight()
+            maxh = self.maximumHeight()
+            if width < minw or width > maxw or height < minh or height > maxh:
+                return
 
             self.setGeometry(x, y, width, height)
