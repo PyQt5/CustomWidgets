@@ -87,8 +87,8 @@ class CTitleBar(QWidget):
                     self.testWindowFlags(Qt.WindowMinMaxButtonsHint):
                 # 如果当前是最大化则隐藏最大化按钮
                 maximized = self._root.isMaximized()
-                self.buttonMaximum.setVisible(not maximized)
-                self.buttonNormal.setVisible(maximized)
+                self.showMaximizeButton(not maximized)
+                self.showNormalButton(maximized)
                 # 修复最大化边距空白问题
                 if maximized:
                     self._oldMargins = self._root.layout().getContentsMargins()

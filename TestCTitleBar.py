@@ -10,7 +10,7 @@ Created on 2019年7月15日
 @description: 
 """
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QDialog
 
 from CTitleBar.CTitleBar import CTitleBar
 
@@ -19,10 +19,10 @@ __Author__ = 'Irony'
 __Copyright__ = 'Copyright (c) 2019'
 
 
-class TestCTitleBar(QWidget):
+class TestCTitleBarBase:
 
     def __init__(self, *args, **kwargs):
-        super(TestCTitleBar, self).__init__(*args, **kwargs)
+        super(TestCTitleBarBase, self).__init__(*args, **kwargs)
         self.resize(500, 400)
         # 设置背景透明
         self.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -34,6 +34,14 @@ class TestCTitleBar(QWidget):
         layout.addWidget(CTitleBar(self, title='CTitleBar'))
         # 底部空白占位
         layout.addWidget(QWidget(self, objectName='bottomWidget'))
+
+
+class TestCTitleBarWidget(QWidget, TestCTitleBarBase):
+    pass
+
+
+class TestCTitleBarDialog(QDialog, TestCTitleBarBase):
+    pass
 
 
 # 标题栏样式
@@ -88,20 +96,18 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
     app.setStyleSheet(Style)
-    w = TestCTitleBar()
+    w = TestCTitleBarWidget()
     w.show()
 
     # 模态属性
-    w1 = TestCTitleBar()
-    w1.setWindowTitle('模态属性')
-    w1.setWindowModality(Qt.ApplicationModal)
+    w1 = TestCTitleBarDialog()
+    w1.setWindowTitle('对话框')
     w1.show()
-    
+
     # 不可调整大小
-    w2 = TestCTitleBar()
+    w2 = TestCTitleBarWidget()
     w2.setWindowTitle('不可调整大小')
-    w2.setMinimumSize(400,400)
+    w2.setMinimumSize(400, 400)
     w2.setMaximumSize(400, 400)
     w2.show()
     sys.exit(app.exec_())
-
