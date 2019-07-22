@@ -34,12 +34,10 @@ class CTitleBar(QWidget):
         self._root = self.window()  # self.parent() or self
 
         self.labelTitle.setText(title)
-        self.buttonNormal.setVisible(False)
         # 是否需要隐藏最小化或者最大化按钮
-        self.buttonMinimum.setVisible(
-            self.testWindowFlags(Qt.WindowMinimizeButtonHint))
-        self.buttonMaximum.setVisible(
-            self.testWindowFlags(Qt.WindowMaximizeButtonHint))
+        self.showMinimizeButton(self.isMinimizeable())
+        self.showNormalButton(False)
+        self.showMaximizeButton(self.isMaximizeable())
 
         # 绑定信号
         self._root.windowTitleChanged.connect(self.setWindowTitle)
@@ -50,20 +48,38 @@ class CTitleBar(QWidget):
         # 对父控件(或者自身)安装事件过滤器
         self._root.installEventFilter(self)
 
+    def isMinimizeable(self):
+        """是否可以最小化
+        """
+        return self.testWindowFlags(Qt.WindowMinimizeButtonHint)
+
+    def isMaximizeable(self):
+        """是否可以最大化
+        """
+        return self.testWindowFlags(Qt.WindowMaximizeButtonHint)
+
     def isResizable(self):
         """是否可调整
         """
         return self._root.minimumSize() != self._root.maximumSize()
 
-    def showEvent(self, event):
-        """界面可调整大小时才显示最大化和还原按钮
-        :param event:
+    def showMinimizeButton(self, show=True):
+        """显示隐藏最小化按钮
         """
-        super(CTitleBar, self).showEvent(event)
-        visible = self.isResizable()
-        self.buttonMaximum.setVisible(visible)
-        # 如果是模态则隐藏最小化
-        self.buttonMinimum.setVisible(not self._root.isModal())
+        self.buttonMinimum.setVisible(show)
+        self.widgetMinimum.setVisible(show)
+
+    def showMaximizeButton(self, show=True):
+        """显示隐藏最大化按钮
+        """
+        self.buttonMaximum.setVisible(show)
+        self.widgetMaximum.setVisible(show)
+
+    def showNormalButton(self, show=True):
+        """显示隐藏还原按钮
+        """
+        self.buttonNormal.setVisible(show)
+        self.widgetNormal.setVisible(show)
 
     def eventFilter(self, target, event):
         if isinstance(event, QWindowStateChangeEvent):
@@ -85,7 +101,8 @@ class CTitleBar(QWidget):
         """双击标题栏最大化
         :param event:
         """
-        if not self.testWindowFlags(Qt.WindowMinMaxButtonsHint) or not self.isResizable():
+        if not self.isMaximizeable() or not self.isResizable():
+            # 不能最大化或者不能调整大小
             return
         if self._root.isMaximized():
             self._root.showNormal()
@@ -110,6 +127,7 @@ class CTitleBar(QWidget):
         :param event:
         """
         if self._root.isMaximized():
+            # 最大化时不可移动
             return
         if event.buttons() == Qt.LeftButton and self.mPos:
             pos = event.pos() - self.mPos
@@ -131,12 +149,18 @@ class CTitleBar(QWidget):
         """创建UI
         """
         self.setMinimumSize(0, self.Radius)
-        self.setMaximumSize(16777215, self.Radius)
+        self.setMaximumSize(0xFFFFFF, self.Radius)
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
-        layout.addItem(QSpacerItem(
-            114, 20, QSizePolicy.Fixed, QSizePolicy.Minimum))
+        # 左侧 添加4个对应的空白占位
+        for name in ('widgetMinimum', 'widgetMaximum', 'widgetNormal', 'widgetClose'):
+            widget = QWidget(self)
+            widget.setMinimumSize(self.Radius, self.Radius)
+            widget.setMaximumSize(self.Radius, self.Radius)
+            widget.setObjectName('CTitleBar_%s' % name)
+            setattr(self, name, widget)
+            layout.addWidget(widget)
         layout.addItem(QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
         # 标题
