@@ -6,7 +6,7 @@ Created on 2019年4月19日
 @author: Irony
 @site: https://pyqt5.com https://github.com/892768447
 @email: 892768447@qq.com
-@file: CColorPicker.CColorSlider
+@file: CustomWidgets.CColorPicker.CColorSlider
 @description: 颜色滑动条
 """
 from PyQt5.QtCore import Qt, pyqtSignal

@@ -6,14 +6,14 @@ Created on 2019年4月21日
 @author: Irony
 @site: https://pyqt5.com https://github.com/892768447
 @email: 892768447@qq.com
-@file: CColorPicker.CColorPalettes
+@file: CustomWidgets.CColorPicker.CColorPalettes
 @description: 
 """
 from PyQt5.QtCore import QSettings, pyqtSignal
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QTabWidget
 
-from CColorPicker.CColorItems import CColorItems
+from CustomWidgets.CColorPicker.CColorItems import CColorItems
 
 
 __Author__ = 'Irony'

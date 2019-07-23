@@ -6,7 +6,7 @@ Created on 2019年4月20日
 @author: Irony
 @site: https://pyqt5.com https://github.com/PyQt5
 @email: 892768447@qq.com
-@file: CColorPicker.CColorPanel
+@file: CustomWidgets.CColorPicker.CColorPanel
 @description: 饱和度面板
 """
 from PyQt5.QtCore import Qt, QPoint, pyqtSignal

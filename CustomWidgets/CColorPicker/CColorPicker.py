@@ -6,7 +6,7 @@ Created on 2019年4月19日
 @author: Irony
 @site: https://pyqt5.com https://github.com/892768447
 @email: 892768447@qq.com
-@file: CColorPicker.CColorPicker
+@file: CustomWidgets.CColorPicker.CColorPicker
 @description: 
 """
 from PyQt5.QtCore import Qt
@@ -15,12 +15,12 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget,\
     QGraphicsDropShadowEffect, QSpacerItem, QSizePolicy,\
     QHBoxLayout, QPushButton
 
-from CColorPicker.CColorControl import CColorControl
-from CColorPicker.CColorInfos import CColorInfos
-from CColorPicker.CColorPalettes import CColorPalettes
-from CColorPicker.CColorPanel import CColorPanel
-from CColorPicker.CColorSlider import CColorSlider
-from CColorPicker.CColorStraw import CColorStraw
+from CustomWidgets.CColorPicker.CColorControl import CColorControl
+from CustomWidgets.CColorPicker.CColorInfos import CColorInfos
+from CustomWidgets.CColorPicker.CColorPalettes import CColorPalettes
+from CustomWidgets.CColorPicker.CColorPanel import CColorPanel
+from CustomWidgets.CColorPicker.CColorSlider import CColorSlider
+from CustomWidgets.CColorPicker.CColorStraw import CColorStraw
 
 
 __Author__ = "Irony"

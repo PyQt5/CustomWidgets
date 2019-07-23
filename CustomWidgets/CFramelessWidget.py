@@ -6,7 +6,7 @@ Created on 2019年7月16日
 @author: Irony
 @site: https://pyqt5.com https://github.com/892768447
 @email: 892768447@qq.com
-@file: CFramelessBase.CFramelessBase
+@file: CustomWidgets.CFramelessBase
 @description: 无边框窗口
 """
 from PyQt5.QtCore import Qt

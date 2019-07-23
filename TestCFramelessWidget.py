@@ -12,8 +12,8 @@ Created on 2019年7月16日
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLineEdit
 
-from CFramelessWidget.CFramelessWidget import CFramelessWidget, CFramelessDialog
-from CTitleBar.CTitleBar import CTitleBar
+from CustomWidgets.CFramelessWidget import CFramelessWidget, CFramelessDialog
+from CustomWidgets.CTitleBar import CTitleBar
 
 
 __Author__ = 'Irony'

@@ -6,7 +6,7 @@ Created on 2019年4月21日
 @author: Irony
 @site: https://pyqt5.com https://github.com/PyQt5
 @email: 892768447@qq.com
-@file: CColorPicker.CColorInfos
+@file: CustomWidgets.CColorPicker.CColorInfos
 @description: 
 """
 from PyQt5.QtCore import QSize, Qt, QRegExp, pyqtSignal

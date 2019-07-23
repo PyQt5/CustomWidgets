@@ -12,7 +12,7 @@ Created on 2019年7月15日
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QDialog
 
-from CTitleBar.CTitleBar import CTitleBar
+from CustomWidgets.CTitleBar import CTitleBar
 
 
 __Author__ = 'Irony'

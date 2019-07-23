@@ -19,7 +19,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QWidget, QVBoxLayout,\
     QPushButton
 
-from CColorPicker.CColorPicker import CColorPicker
+from CustomWidgets.CColorPicker.CColorPicker import CColorPicker
 
 
 sys.excepthook = cgitb.enable(1, None, 5, '')
