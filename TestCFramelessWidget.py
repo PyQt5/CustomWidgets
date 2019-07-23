@@ -99,6 +99,11 @@ if __name__ == '__main__':
     app.setStyleSheet(Style)
     w = TestCFramelessWidget()
     w.show()
+    # 限制大小
+    w1 = TestCFramelessWidget()
+    w1.setMinimumSize(400, 400)
+    w1.setMaximumSize(400, 400)
+    w1.show()
     w2 = TestCFramelessDialog()
     w2.setWindowTitle('模态')
     w2.exec_()

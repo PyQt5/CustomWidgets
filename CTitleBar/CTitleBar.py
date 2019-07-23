@@ -81,6 +81,17 @@ class CTitleBar(QWidget):
         self.buttonNormal.setVisible(show)
         self.widgetNormal.setVisible(show)
 
+    def showEvent(self, event):
+        super(CTitleBar, self).showEvent(event)
+        if not self.isResizable():
+            self.showMaximizeButton(False)
+            self.showNormalButton(False)
+        else:
+            self.showMaximizeButton(
+                self.isMaximizeable() and not self._root.isMaximized())
+            self.showNormalButton(self.isMaximizeable()
+                                  and self._root.isMaximized())
+
     def eventFilter(self, target, event):
         if isinstance(event, QWindowStateChangeEvent):
             if self._root.isVisible() and not self._root.isMinimized() and \
@@ -93,8 +104,9 @@ class CTitleBar(QWidget):
                 if maximized:
                     self._oldMargins = self._root.layout().getContentsMargins()
                     self._root.layout().setContentsMargins(0, 0, 0, 0)
-                elif hasattr(self, '_oldMargins'):
-                    self._root.layout().setContentsMargins(*self._oldMargins)
+                else:
+                    if hasattr(self, '_oldMargins'):
+                        self._root.layout().setContentsMargins(*self._oldMargins)
         return super(CTitleBar, self).eventFilter(target, event)
 
     def mouseDoubleClickEvent(self, event):
