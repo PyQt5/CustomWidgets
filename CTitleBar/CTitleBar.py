@@ -10,10 +10,10 @@ Created on 2019年7月15日
 @description: 自定义标题栏
 """
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QWindowStateChangeEvent, QFont
+from PyQt5.QtCore import Qt, QPointF
+from PyQt5.QtGui import QWindowStateChangeEvent, QFont, QMouseEvent
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QSpacerItem, QSizePolicy, \
-    QLabel, QPushButton
+    QLabel, QPushButton, QApplication
 
 
 __Author__ = 'Irony'
@@ -41,12 +41,30 @@ class CTitleBar(QWidget):
 
         # 绑定信号
         self._root.windowTitleChanged.connect(self.setWindowTitle)
-        self.buttonMinimum.clicked.connect(self._root.showMinimized)
-        self.buttonMaximum.clicked.connect(self._root.showMaximized)
-        self.buttonNormal.clicked.connect(self._root.showNormal)
+        self.buttonMinimum.clicked.connect(self.showMinimized)
+        self.buttonMaximum.clicked.connect(self.showMaximized)
+        self.buttonNormal.clicked.connect(self.showNormal)
         self.buttonClose.clicked.connect(self._root.close)
         # 对父控件(或者自身)安装事件过滤器
         self._root.installEventFilter(self)
+
+    def showMinimized(self):
+        self._root.showMinimized()
+        # 强制取消hover状态
+        QApplication.sendEvent(self.buttonMinimum, QMouseEvent(
+            QMouseEvent.Leave, QPointF(), Qt.LeftButton, Qt.NoButton, Qt.NoModifier))
+
+    def showNormal(self):
+        self._root.showNormal()
+        # 强制取消hover状态
+        QApplication.sendEvent(self.buttonMaximum, QMouseEvent(
+            QMouseEvent.Leave, QPointF(), Qt.LeftButton, Qt.NoButton, Qt.NoModifier))
+
+    def showMaximized(self):
+        self._root.showMaximized()
+        # 强制取消hover状态
+        QApplication.sendEvent(self.buttonNormal, QMouseEvent(
+            QMouseEvent.Leave, QPointF(), Qt.LeftButton, Qt.NoButton, Qt.NoModifier))
 
     def isMinimizeable(self):
         """是否可以最小化
