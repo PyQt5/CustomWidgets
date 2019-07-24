@@ -28,6 +28,7 @@ class Window(QWidget):
         super(Window, self).__init__(*args, **kwargs)
         layout = QVBoxLayout(self)
 
+        # 测试1
         self.pageLabel1 = QLabel('当前页: 1', self, alignment=Qt.AlignCenter)
         layout.addWidget(self.pageLabel1)
         # 分页控件
@@ -40,6 +41,7 @@ class Window(QWidget):
         layout.addItem(QSpacerItem(
             20, 40, QSizePolicy.Minimum, QSizePolicy.Minimum))
 
+        # 测试2
         self.pageLabel2 = QLabel('当前页: 1', self, alignment=Qt.AlignCenter)
         layout.addWidget(self.pageLabel2)
         # 分页控件
@@ -51,6 +53,38 @@ class Window(QWidget):
         layout.addWidget(self.paginationBar2)
         layout.addItem(QSpacerItem(
             20, 40, QSizePolicy.Minimum, QSizePolicy.Minimum))
+
+        # 测试3
+        self.pageLabel3 = QLabel('当前页: 1', self, alignment=Qt.AlignCenter)
+        layout.addWidget(self.pageLabel3)
+        # 分页控件
+        self.paginationBar3 = CPaginationBar(self, totalPages=20)
+        # 设置信息
+        self.paginationBar3.setInfos('共 400 条')
+        # 设置扁平样式
+        self.paginationBar3.setStyleSheet(FlatStyle)
+        self.paginationBar3.pageChanged.connect(
+            lambda page: self.pageLabel3.setText('当前页: %d' % page))
+        layout.addWidget(self.paginationBar3)
+        layout.addItem(QSpacerItem(
+            20, 40, QSizePolicy.Minimum, QSizePolicy.Minimum))
+
+        # 测试4
+        self.pageLabel4 = QLabel('当前页: 1', self, alignment=Qt.AlignCenter)
+        layout.addWidget(self.pageLabel4)
+        # 分页控件
+        self.paginationBar4 = CPaginationBar(self, totalPages=20)
+        # 设置信息
+        self.paginationBar4.setInfos('共 400 条')
+        # 开启跳转功能
+        self.paginationBar4.setJumpWidget(True)
+        # 设置普通样式
+        self.paginationBar4.setStyleSheet(Style)
+        self.paginationBar4.pageChanged.connect(
+            lambda page: self.pageLabel4.setText('当前页: %d' % page))
+        layout.addWidget(self.paginationBar4)
+        layout.addItem(QSpacerItem(
+            40, 40, QSizePolicy.Minimum, QSizePolicy.Minimum))
 
         self.pageEdit = QLineEdit(self)
         self.pageEdit.setValidator(QIntValidator(self.pageEdit))
@@ -67,6 +101,8 @@ class Window(QWidget):
         page = int(page)
         self.paginationBar1.setTotalPages(page)
         self.paginationBar2.setTotalPages(page)
+        self.paginationBar3.setTotalPages(page)
+        self.paginationBar4.setTotalPages(page)
 
 
 if __name__ == '__main__':

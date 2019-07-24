@@ -10,4 +10,4 @@
 
 ## CColorPicker
  - [使用方法](../TestCColorPicker.py)
- - ![CFramelessWidget](../ScreenShot/CColorPicker.gif)
+ - ![CColorPicker](../ScreenShot/CColorPicker.gif)
