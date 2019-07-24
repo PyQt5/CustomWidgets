@@ -5,9 +5,10 @@
 PyQt Custom Widgets - PyQt 自定义控件
 
 # 目录
- - [CTitleBar　　　　　自定义标题栏](CustomWidgets/#CTitleBar)
- - [CTitleBar　　　　　无边框窗口](CustomWidgets/#CFramelessWidget)
- - [CColorPicker　　 　颜色选择对话框](CustomWidgets/#CColorPicker)
+ - [CTitleBar　　　　　　自定义标题栏](CustomWidgets/#CTitleBar)
+ - [CTitleBar　　　　　　无边框窗口](CustomWidgets/#CFramelessWidget)
+ - [CColorPicker　　 　　颜色选择对话框](CustomWidgets/#CColorPicker)
+ - [CPaginationBar　　 　分页控件](CustomWidgets/#CPaginationBar)
 
 ## QQ群
 

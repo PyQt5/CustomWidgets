@@ -11,3 +11,7 @@
 ## CColorPicker
  - [使用方法](../TestCColorPicker.py)
  - ![CColorPicker](../ScreenShot/CColorPicker.gif)
+
+## CPaginationBar
+ - [使用方法](../TestCPaginationBar.py)
+ - ![CPaginationBar](../ScreenShot/CPaginationBar.gif)
