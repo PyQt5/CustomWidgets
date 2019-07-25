@@ -9,8 +9,9 @@ Created on 2019年7月24日
 @file: CustomWidgets.CDrawer
 @description: 
 """
-from PyQt5.QtCore import Qt, QPropertyAnimation, QRect, QEasingCurve
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import Qt, QPropertyAnimation, QEasingCurve, QPoint, QPointF
+from PyQt5.QtGui import QPainter, QColor, QMouseEvent
+from PyQt5.QtWidgets import QWidget, QApplication
 
 
 __Author__ = 'Irony'
@@ -21,43 +22,101 @@ class CDrawer(QWidget):
 
     LEFT, TOP, RIGHT, BOTTOM = range(4)
 
-    def __init__(self, *args, stretch=1 / 3, direction=0, **kwargs):
+    def __init__(self, *args, stretch=1 / 3, direction=0, widget=None, **kwargs):
         super(CDrawer, self).__init__(*args, **kwargs)
         self.setWindowFlags(Qt.Popup)
         self.setAttribute(Qt.WA_StyledBackground, True)
-        self.setStretch(stretch)        # 占比
-        self.direction = direction      # 方向
-        self.animation = QPropertyAnimation(self, b'geometry', self)
+        self.animation = QPropertyAnimation(self)
+        self.animation.setPropertyName(b'pos')
         self.animation.setEasingCurve(QEasingCurve.OutCubic)
         self.animation.setDuration(500)
+        self.setStretch(stretch)        # 占比
+        self.direction = direction      # 方向
+        self.setWidget(widget)          # 子控件
+        self.installEventFilter(self)
+
+    def paintEvent(self, event):
+        """绘制背景mask
+        :param event:
+        """
+        painter = QPainter(self)
+        painter.fillRect(self.rect(), QColor(55, 55, 55, 1))
+        super(CDrawer, self).paintEvent(event)
+
+    def mousePressEvent(self, event):
+        pos = event.pos()
+        if pos.x() >= 0 and pos.y() >= 0 and self.childAt(pos) == None and self.widget:
+            if not self.widget.geometry().contains(pos):
+                # 模拟点击外侧关闭
+                QApplication.sendEvent(self, QMouseEvent(
+                    QMouseEvent.MouseButtonPress, QPointF(-1, -1), Qt.LeftButton, Qt.NoButton, Qt.NoModifier))
+                return
+        super(CDrawer, self).mousePressEvent(event)
 
     def show(self):
         super(CDrawer, self).show()
         parent = self.parent().window() if self.parent() else self.window()
-        if not parent:
+        if not parent or not self.widget:
             return
-        geometry = parent.geometry()
+        # 设置Drawer大小和主窗口一致
+        self.setGeometry(parent.geometry())
+        geometry = self.geometry()
+
         if self.direction == self.LEFT:
-            startGeometry = QRect(
-                geometry.x(), geometry.y(), 0, geometry.height())
-            endGeometry = QRect(geometry.x(), geometry.y(), int(
-                geometry.width() * self.stretch), geometry.height())
-            self.setGeometry(endGeometry)
-            self.animation.setStartValue(startGeometry)
-            self.animation.setEndValue(endGeometry)
+            # 左侧抽屉
+            self.widget.setGeometry(
+                0, 0, int(geometry.width() * self.stretch), geometry.height())
+            self.widget.hide()
+            self.animation.setStartValue(QPoint(-self.widget.width(), 0))
+            self.animation.setEndValue(QPoint(0, 0))
+            self.animation.start()
+            self.widget.show()
         elif self.direction == self.TOP:
-            self.setGeometry(geometry.x(), geometry.y(), geometry.width(), int(
-                geometry.height() * self.stretch))
-
+            # 上方抽屉
+            self.widget.setGeometry(
+                0, 0, geometry.width(), int(geometry.height() * self.stretch))
+            self.widget.hide()
+            self.animation.setStartValue(QPoint(0, -self.widget.height()))
+            self.animation.setEndValue(QPoint(0, 0))
+            self.animation.start()
+            self.widget.show()
         elif self.direction == self.RIGHT:
+            # 右侧抽屉
             width = int(geometry.width() * self.stretch)
-            self.setGeometry(geometry.x() + geometry.width() - width,
-                             geometry.y(), width, geometry.height())
-
+            self.widget.setGeometry(
+                geometry.width() - width, 0, width, geometry.height())
+            self.widget.hide()
+            self.animation.setStartValue(QPoint(self.width(), 0))
+            self.animation.setEndValue(
+                QPoint(self.width() - self.widget.width(), 0))
+            self.animation.start()
+            self.widget.show()
         elif self.direction == self.BOTTOM:
+            # 下方抽屉
             height = int(geometry.height() * self.stretch)
-            self.setGeometry(geometry.x(), geometry.y() + geometry.height() -
-                             height, geometry.width(), height)
+            self.widget.setGeometry(
+                0, geometry.height() - height, geometry.width(), height)
+            self.widget.hide()
+            self.animation.setStartValue(QPoint(0, self.height()))
+            self.animation.setEndValue(
+                QPoint(0, self.height() - self.widget.height()))
+            self.animation.start()
+            self.widget.show()
+
+    def setWidget(self, widget):
+        """设置子控件
+        :param widget:
+        """
+        self.widget = widget
+        if widget:
+            widget.setParent(self)
+            self.animation.setTargetObject(widget)
+
+    def setEasingCurve(self, easingCurve):
+        """设置动画曲线
+        :param easingCurve:
+        """
+        self.animation.setEasingCurve(easingCurve)
 
     def getStretch(self):
         """获取占比
