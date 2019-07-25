@@ -15,3 +15,7 @@
 ## CPaginationBar
  - [使用方法](../TestCPaginationBar.py)
  - ![CPaginationBar](../ScreenShot/CPaginationBar.gif)
+
+## CDrawer
+ - [使用方法](../TestCDrawer.py)
+ - ![CDrawer](../ScreenShot/CDrawer.gif)
