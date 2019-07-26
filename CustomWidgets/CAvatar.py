@@ -32,6 +32,7 @@ class CAvatar(QWidget):
         super(CAvatar, self).__init__(*args, **kwargs)
         self.loading = False        # 是否正在加载
         self.progress = 0           # 加载进度
+        self.url = ''
         self._pixmap = QPixmap()    # 图片对象
         self.setShape(shape)
         self.setCacheDir(cacheDir)
