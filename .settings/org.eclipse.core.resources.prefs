@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//CustomWidgets/CAvatar.py=utf-8
 encoding//CustomWidgets/CColorPicker/CColorControl.py=utf-8
 encoding//CustomWidgets/CColorPicker/CColorInfos.py=utf-8
 encoding//CustomWidgets/CColorPicker/CColorItems.py=utf-8
@@ -12,6 +13,7 @@ encoding//CustomWidgets/CFramelessWidget.py=utf-8
 encoding//CustomWidgets/CPaginationBar.py=utf-8
 encoding//CustomWidgets/CSlider.py=utf-8
 encoding//CustomWidgets/CTitleBar.py=utf-8
+encoding/TestCAvatar.py=utf-8
 encoding/TestCColorPicker.py=utf-8
 encoding/TestCDrawer.py=utf-8
 encoding/TestCFramelessWidget.py=utf-8
