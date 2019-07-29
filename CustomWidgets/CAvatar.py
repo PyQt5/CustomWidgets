@@ -11,7 +11,8 @@ Created on 2019年7月26日
 """
 import os
 
-from PyQt5.QtCore import QUrl, QRectF, Qt, QSize, QTimer
+from PyQt5.QtCore import QUrl, QRectF, Qt, QSize, QTimer, QPropertyAnimation,\
+    QPointF, pyqtProperty
 from PyQt5.QtGui import QPixmap, QColor, QPainter, QPainterPath
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkDiskCache,\
     QNetworkRequest
@@ -30,15 +31,22 @@ class CAvatar(QWidget):
     SizeLarge = QSize(128, 128)
     SizeMedium = QSize(64, 64)
     SizeSmall = QSize(32, 32)
+    StartAngle = 0          # 起始旋转角度
+    EndAngle = 360          # 结束旋转角度
 
-    def __init__(self, *args, shape=0, url='', cacheDir=False, size=QSize(64, 64), **kwargs):
+    def __init__(self, *args, shape=0, url='', cacheDir=False, size=QSize(64, 64), animation=False, **kwargs):
         super(CAvatar, self).__init__(*args, **kwargs)
         self.url = ''
+        self._angle = 0             # 角度
         self.pradius = 0            # 加载进度条半径
+        self.animation = animation  # 是否使用动画
         self._pixmap = QPixmap()    # 图片对象
         self.pixmap = QPixmap()     # 被绘制的对象
         # 进度动画定时器
         self.loadingTimer = QTimer(self, timeout=self.onLoading)
+        # 旋转动画
+        self.rotateAnimation = QPropertyAnimation(
+            self, b'angle', self, loopCount=1)
         self.setShape(shape)
         self.setCacheDir(cacheDir)
         self.setSize(size)
@@ -64,7 +72,13 @@ class CAvatar(QWidget):
         path.addRoundedRect(
             QRectF(-halfW, -halfH, diameter, diameter), radius, radius)
         painter.setClipPath(path)
-        painter.drawPixmap(-int(halfW), -int(halfH), self.pixmap)
+        # 如果是动画效果
+        if self.rotateAnimation.state() == QPropertyAnimation.Running:
+            painter.rotate(self._angle)  # 旋转
+            painter.drawPixmap(
+                QPointF(-self.pixmap.width() / 2, -self.pixmap.height() / 2), self.pixmap)
+        else:
+            painter.drawPixmap(-int(halfW), -int(halfH), self.pixmap)
         # 如果在加载
         if self.loadingTimer.isActive():
             diameter = 2 * self.pradius
@@ -73,6 +87,33 @@ class CAvatar(QWidget):
             painter.setPen(Qt.NoPen)
             painter.drawRoundedRect(
                 QRectF(-self.pradius, -self.pradius, diameter, diameter), self.pradius, self.pradius)
+
+    def enterEvent(self, event):
+        """鼠标进入动画
+        :param event:
+        """
+        if not self.animation:
+            return
+        self.rotateAnimation.stop()
+        cv = self.rotateAnimation.currentValue() or self.StartAngle
+        self.rotateAnimation.setDuration(
+            540 if cv == 0 else int(cv / self.EndAngle * 540))
+        self.rotateAnimation.setStartValue(cv)
+        self.rotateAnimation.setEndValue(self.EndAngle)
+        self.rotateAnimation.start()
+
+    def leaveEvent(self, event):
+        """鼠标离开动画
+        :param event:
+        """
+        if not self.animation:
+            return
+        self.rotateAnimation.stop()
+        cv = self.rotateAnimation.currentValue() or self.EndAngle
+        self.rotateAnimation.setDuration(int(cv / self.EndAngle * 540))
+        self.rotateAnimation.setStartValue(cv)
+        self.rotateAnimation.setEndValue(self.StartAngle)
+        self.rotateAnimation.start()
 
     def onLoading(self):
         """更新进度动画
@@ -147,6 +188,15 @@ class CAvatar(QWidget):
         self.setMinimumSize(size)
         self.setMaximumSize(size)
         self._resizePixmap()
+
+    @pyqtProperty(int)
+    def angle(self):
+        return self._angle
+
+    @angle.setter
+    def angle(self, value):
+        self._angle = value
+        self.update()
 
     def _resizePixmap(self):
         """缩放图片

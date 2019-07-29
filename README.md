@@ -10,6 +10,7 @@ PyQt Custom Widgets - PyQt 自定义控件
  - [CColorPicker　　 　　颜色选择对话框](CustomWidgets/#CColorPicker)
  - [CPaginationBar　　　分页控件](CustomWidgets/#CPaginationBar)
  - [CDrawer　　　　　　侧边栏抽屉控件](CustomWidgets/#CDrawer)
+ - [CAvatar　　　　　 　头像控件](CustomWidgets/#CAvatar)
 
 ## QQ群
 

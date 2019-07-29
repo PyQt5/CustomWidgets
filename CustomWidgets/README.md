@@ -19,3 +19,7 @@
 ## CDrawer
  - [使用方法](../TestCDrawer.py)
  - ![CDrawer](../ScreenShot/CDrawer.gif)
+
+## CAvatar
+ - [使用方法](../TestCAvatar.py)
+ - ![CAvatar](../ScreenShot/CAvatar.gif)

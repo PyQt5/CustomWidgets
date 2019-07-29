@@ -9,6 +9,7 @@ Created on 2019年7月26日
 @file: TestCAvatar
 @description: 
 """
+from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from CustomWidgets.CAvatar import CAvatar
@@ -32,18 +33,21 @@ class Window(QWidget):
         layout.addWidget(CAvatar(
             self, shape=CAvatar.Circle, url='TestData/example-1.jpg', size=CAvatar.SizeSmall))
         layout.addWidget(CAvatar(
-            self, shape=CAvatar.Circle, url='TestData/example-2.jpg'))
+            self, shape=CAvatar.Circle, url='TestData/example-2.jpg', animation=True))
         layout.addWidget(CAvatar(
-            self, shape=CAvatar.Rectangle, url='TestData/example-3.jpg', size=CAvatar.SizeLarge))
+            self, shape=CAvatar.Rectangle, url='TestData/example-3.jpg', size=QSize(48, 48)))
 
         # 网络头像
         layout.addWidget(CAvatar(
-            self, shape=CAvatar.Rectangle, url='https://www.thiswaifudoesnotexist.net/example-1000.jpg', size=CAvatar.SizeSmall))
+            self, shape=CAvatar.Rectangle,
+            url='https://www.thiswaifudoesnotexist.net/example-1000.jpg', size=CAvatar.SizeSmall))
         layout.addWidget(CAvatar(
-            self, shape=CAvatar.Circle, url='https://www.thiswaifudoesnotexist.net/example-1001.jpg'))
+            self, shape=CAvatar.Circle, animation=True,
+            url='https://www.thiswaifudoesnotexist.net/example-1001.jpg'))
         # 假装路径错误
         layout.addWidget(CAvatar(
-            self, shape=CAvatar.Rectangle, url='https://www.thiswaifudoesnotexist.net/example.jpg', size=CAvatar.SizeLarge))
+            self, shape=CAvatar.Rectangle,
+            url='https://www.thiswaifudoesnotexist.net/example.jpg'))
 
 
 if __name__ == '__main__':
