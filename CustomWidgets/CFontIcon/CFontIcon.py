@@ -66,10 +66,10 @@ class CFontIcon:
             os.path.join(dirPath, 'Fonts', 'materialdesignicons-webfont.json'),
         )
 
-    def icon(self, name):
+    def icon(self, name, color=Qt.black):
         if name not in self.fontMap:
             return QIcon()
-        return QIcon(CIconEngine(self.font, self.fontMap[name]))
+        return QIcon(CIconEngine(self.font, self.fontMap[name], color))
 
     def value(self, name):
         """返回对应的字符
@@ -86,13 +86,15 @@ class CFontIcon:
 
 class CIconEngine(QIconEngine):
 
-    def __init__(self, font, text, *args, **kwargs):
+    def __init__(self, font, text, color, *args, **kwargs):
         super(CIconEngine, self).__init__(*args, **kwargs)
         self.font = font
         self.text = text
+        self.color = color
 
     def paint(self, painter, rect, mode, state):
         painter.save()
+        painter.setPen(self.color)
         self.font.setPixelSize(round(0.875 * min(rect.width(), rect.height())))
         painter.setFont(self.font)
         painter.drawText(
