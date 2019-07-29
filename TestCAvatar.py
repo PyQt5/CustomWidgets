@@ -24,14 +24,32 @@ class Window(QWidget):
     def __init__(self, *args, **kwargs):
         super(Window, self).__init__(*args, **kwargs)
         layout = QHBoxLayout(self)
-        layout.addWidget(CAvatar(shape=CAvatar.Circle,
-                                 url='TestData/example-1.jpg'))
-        layout.addWidget(CAvatar(shape=CAvatar.Rectangle,
-                                 url='TestData/example-2.jpg'))
+        # 没有头像
+        layout.addWidget(CAvatar(self))
+        # 路径错误
+        layout.addWidget(CAvatar(self, url='test.jpg'))
+        # 本地三种尺寸头像
+        layout.addWidget(CAvatar(
+            self, shape=CAvatar.Circle, url='TestData/example-1.jpg', size=CAvatar.SizeSmall))
+        layout.addWidget(CAvatar(
+            self, shape=CAvatar.Circle, url='TestData/example-2.jpg'))
+        layout.addWidget(CAvatar(
+            self, shape=CAvatar.Rectangle, url='TestData/example-3.jpg', size=CAvatar.SizeLarge))
+
+        # 网络头像
+        layout.addWidget(CAvatar(
+            self, shape=CAvatar.Rectangle, url='https://www.thiswaifudoesnotexist.net/example-1000.jpg', size=CAvatar.SizeSmall))
+        layout.addWidget(CAvatar(
+            self, shape=CAvatar.Circle, url='https://www.thiswaifudoesnotexist.net/example-1001.jpg'))
+        # 假装路径错误
+        layout.addWidget(CAvatar(
+            self, shape=CAvatar.Rectangle, url='https://www.thiswaifudoesnotexist.net/example.jpg', size=CAvatar.SizeLarge))
 
 
 if __name__ == '__main__':
     import sys
+    import cgitb
+    sys.excepthook = cgitb.enable(1, None, 5, '')
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
     w = Window()
