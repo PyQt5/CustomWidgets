@@ -8,7 +8,8 @@ PyQt Custom Widgets - PyQt 自定义控件
  - [CTitleBar　　　　　　自定义标题栏](CustomWidgets/#CTitleBar)
  - [CTitleBar　　　　　　无边框窗口](CustomWidgets/#CFramelessWidget)
  - [CColorPicker　　 　　颜色选择对话框](CustomWidgets/#CColorPicker)
- - [CPaginationBar　　 　分页控件](CustomWidgets/#CPaginationBar)
+ - [CPaginationBar　　　分页控件](CustomWidgets/#CPaginationBar)
+ - [CDrawer　　　　　　侧边栏抽屉控件](CustomWidgets/#CDrawer)
 
 ## QQ群
 
