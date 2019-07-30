@@ -12,11 +12,11 @@ Created on 2019年7月28日
 import json
 
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, QSize
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIcon
 from PyQt5.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QLineEdit, QListView,\
     QMainWindow, QStatusBar, QToolButton, QGridLayout, QLabel, QPushButton
 
-from CustomWidgets.CFontIcon.CFontIcon import CFontIcon
+from CustomWidgets.CFontIcon.CFontIcon import CIconLoader, CIconAnimationSpin
 
 
 __Author__ = 'Irony'
@@ -57,14 +57,14 @@ class FontViewWidget(QWidget):
         self.listView.setModel(self.fmodel)
         layout.addWidget(self.listView)
 
-        # 字体
-        icon = config[0]
+        # 字体加载器
+        loader = config[0]
 
         # 添加Item
         fontMap = json.loads(open(config[1], 'rb').read().decode(
             encoding='utf_8', errors='ignore'), encoding='utf_8')
         for name, _ in fontMap.items():
-            item = QStandardItem(icon.icon(name), '')
+            item = QStandardItem(loader.icon(name), '')
             item.setData(name, Qt.ToolTipRole)
             item.setData(name, Qt.StatusTipRole)
             item.setTextAlignment(Qt.AlignCenter)
@@ -94,15 +94,45 @@ class ButtonsWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super(ButtonsWidget, self).__init__(*args, **kwargs)
         layout = QGridLayout(self)
+        loader = CIconLoader.fontMaterial()
+
+        # 创建一个多态的icon
+        icon = loader.icon('mdi-qqchat')
+        icon.add('mdi-access-point', Qt.red, QIcon.Normal, QIcon.On)
+
+        icon.add('mdi-camera-metering-matrix',
+                 Qt.green, QIcon.Disabled, QIcon.Off)
+        icon.add('mdi-file-document-box-check',
+                 Qt.blue, QIcon.Disabled, QIcon.On)
+
+        icon.add('mdi-magnify-minus', Qt.cyan, QIcon.Active, QIcon.Off)
+        icon.add('mdi-account', Qt.magenta, QIcon.Active, QIcon.On)
+
+        icon.add('mdi-camera-off', Qt.yellow, QIcon.Selected, QIcon.Off)
+        icon.add('mdi-set-center', Qt.white, QIcon.Selected, QIcon.On)
+
         layout.addWidget(QLabel('Normal', self), 0, 0)
-        layout.addWidget(QPushButton('Normal', self), 0, 1)
+        layout.addWidget(QPushButton(icon, loader.value(
+            'mdi-qqchat'), self, font=loader.font), 0, 1)
+
         layout.addWidget(QLabel('Disabled', self), 1, 0)
-        layout.addWidget(QPushButton('Disabled', self, enabled=False), 1, 1)
+        layout.addWidget(QPushButton(icon, loader.value(
+            'mdi-qqchat'), self, enabled=False, font=loader.font), 1, 1)
+
         layout.addWidget(QLabel('Active', self), 2, 0)
-        layout.addWidget(QPushButton('Active', self), 2, 1)
+        layout.addWidget(QPushButton(icon, loader.value(
+            'mdi-qqchat'), self, font=loader.font), 2, 1)
+
         layout.addWidget(QLabel('Selected', self), 3, 0)
-        layout.addWidget(QPushButton('Selected', self,
-                                     checkable=True, checked=True), 3, 1)
+        layout.addWidget(QPushButton(icon, loader.value(
+            'mdi-qqchat'), self, font=loader.font, checkable=True, checked=True), 3, 1)
+
+        aniButton = QPushButton(self)
+        icon = loader.icon(
+            'mdi-loading', animation=CIconAnimationSpin(aniButton, 2))
+        aniButton.setIcon(icon)
+        layout.addWidget(QLabel('动画', self), 4, 0)
+        layout.addWidget(aniButton, 4, 1)
 
 
 class Window(QMainWindow):
@@ -116,14 +146,14 @@ class Window(QMainWindow):
         self.tabWidget.addTab(FontViewWidget(
             self.statusBar(),
             [
-                CFontIcon.fontMaterial(),
+                CIconLoader.fontMaterial(),
                 'CustomWidgets/CFontIcon/Fonts/materialdesignicons-webfont.json'
             ],
             self.tabWidget), 'Material Font')
         self.tabWidget.addTab(FontViewWidget(
             self.statusBar(),
             [
-                CFontIcon.fontAwesome(),
+                CIconLoader.fontAwesome(),
                 'CustomWidgets/CFontIcon/Fonts/fontawesome-webfont.json'
             ],
             self.tabWidget), 'Awesome Font')
