@@ -16,7 +16,7 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIcon
 from PyQt5.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QLineEdit, QListView,\
     QMainWindow, QStatusBar, QToolButton, QGridLayout, QLabel, QPushButton
 
-from CustomWidgets.CFontIcon.CFontIcon import CIconLoader, CIconAnimationSpin
+from CustomWidgets.CFontIcon.CFontIcon import CIconLoader
 
 
 __Author__ = 'Irony'
@@ -112,27 +112,20 @@ class ButtonsWidget(QWidget):
         icon.add('mdi-set-center', Qt.white, QIcon.Selected, QIcon.On)
 
         layout.addWidget(QLabel('Normal', self), 0, 0)
-        layout.addWidget(QPushButton(icon, loader.value(
-            'mdi-qqchat'), self, font=loader.font), 0, 1)
+        layout.addWidget(QPushButton(self, icon=icon, text=loader.value(
+            'mdi-qqchat'), font=loader.font, iconSize=QSize(36, 36)), 0, 1)
 
         layout.addWidget(QLabel('Disabled', self), 1, 0)
-        layout.addWidget(QPushButton(icon, loader.value(
-            'mdi-qqchat'), self, enabled=False, font=loader.font), 1, 1)
+        layout.addWidget(QPushButton(self, icon=icon, text=loader.value(
+            'mdi-qqchat'), enabled=False, font=loader.font, iconSize=QSize(48, 48)), 1, 1)
 
         layout.addWidget(QLabel('Active', self), 2, 0)
-        layout.addWidget(QPushButton(icon, loader.value(
-            'mdi-qqchat'), self, font=loader.font), 2, 1)
+        layout.addWidget(QPushButton(self, icon=icon, text=loader.value(
+            'mdi-qqchat'), font=loader.font, iconSize=QSize(64, 64)), 2, 1)
 
         layout.addWidget(QLabel('Selected', self), 3, 0)
-        layout.addWidget(QPushButton(icon, loader.value(
-            'mdi-qqchat'), self, font=loader.font, checkable=True, checked=True), 3, 1)
-
-        aniButton = QPushButton(self)
-        icon = loader.icon(
-            'mdi-loading', animation=CIconAnimationSpin(aniButton, 2))
-        aniButton.setIcon(icon)
-        layout.addWidget(QLabel('动画', self), 4, 0)
-        layout.addWidget(aniButton, 4, 1)
+        layout.addWidget(QPushButton(self, icon=icon, text=loader.value(
+            'mdi-qqchat'), font=loader.font, checkable=True, checked=True), 3, 1)
 
 
 class Window(QMainWindow):

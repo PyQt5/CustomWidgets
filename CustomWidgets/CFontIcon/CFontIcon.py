@@ -12,7 +12,7 @@ Created on 2019年7月28日
 import json
 import os
 
-from PyQt5.QtCore import Qt, QPoint, QRect, QTimer
+from PyQt5.QtCore import Qt, QPoint, QRect
 from PyQt5.QtGui import QFontDatabase, QIcon, QIconEngine, QPixmap, QPainter,\
     QFont
 
@@ -39,8 +39,6 @@ class CIconEngine(QIconEngine):
         self.font.setPixelSize(round(0.875 * min(rect.width(), rect.height())))
         painter.setFont(self.font)
         if self.icon:
-            if self.icon.animation:
-                self.icon.animation.paint(painter, rect)
             ms = self.icon._getMode(mode) * self.icon._getState(state)
             text, color = self.icon.icons.get(ms, (None, None))
             if text == None and color == None:
@@ -58,33 +56,6 @@ class CIconEngine(QIconEngine):
         return pixmap
 
 
-class CIconAnimationSpin:
-
-    def __init__(self, parent, interval=10, step=1):
-        self.parent = parent
-        self.angle = 0
-        self.timer = None
-        self.interval = interval
-        self.step = step
-
-    def update(self):
-        if self.angle >= 360:
-            self.angle = 0
-        self.angle += self.step
-        self.parent.update()
-
-    def paint(self, painter, rect):
-        if not self.timer:
-            self.timer = QTimer(self.parent, timeout=self.update)
-            self.timer.start(self.interval)
-        else:
-            x_center = rect.width() * 0.5
-            y_center = rect.height() * 0.5
-            painter.translate(x_center, y_center)
-            painter.rotate(self.angle)
-            painter.translate(-x_center, -y_center)
-
-
 class CIcon(QIcon):
 
     # New Mode
@@ -97,17 +68,13 @@ class CIcon(QIcon):
     Off = int(QIcon.Off) + 6
     On = int(QIcon.On) + 6
 
-    def __init__(self, engine, fontMap, animation=None):
+    def __init__(self, engine, fontMap):
         super(CIcon, self).__init__(engine)
         engine.setIcon(self)
-        self.animation = animation
         self.fontMap = fontMap
         self.icons = {}
         self.modestate = [m * s for m in [
             self.Normal, self.Disabled, self.Active, self.Selected] for s in [self.Off, self.On]]
-
-    def setAnimation(self, animation):
-        self.animation = animation
 
     def add(self, name, color=Qt.black, mode=QIcon.Normal, state=QIcon.Off):
         """添加或者更新一个指定mode和state的字体和颜色
@@ -180,11 +147,11 @@ class CIconLoader:
             os.path.join(dirPath, 'Fonts', 'materialdesignicons-webfont.json'),
         )
 
-    def icon(self, name, animation=None):
+    def icon(self, name):
         """根据键值返回一个字体图标
         :param name:
         """
-        return CIcon(CIconEngine(self._font), self.fontMap, animation).add(name)
+        return CIcon(CIconEngine(self._font), self.fontMap).add(name)
 
     @property
     def font(self):
