@@ -16,7 +16,7 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIcon
 from PyQt5.QtWidgets import QTabWidget, QWidget, QVBoxLayout, QLineEdit, QListView,\
     QMainWindow, QStatusBar, QToolButton, QGridLayout, QLabel, QPushButton
 
-from CustomWidgets.CFontIcon.CFontIcon import CIconLoader
+from CustomWidgets.CFontIcon.CFontIcon import CIconLoader, CIconAnimationSpin
 
 
 __Author__ = 'Irony'
@@ -127,11 +127,21 @@ class ButtonsWidget(QWidget):
         layout.addWidget(QPushButton(self, icon=icon, text=loader.value(
             'mdi-qqchat'), font=loader.font, checkable=True, checked=True), 3, 1)
 
+        # 旋转动画
+        aniButton = QPushButton(self, iconSize=QSize(48, 48))
+        loader = CIconLoader.fontAwesome()
+        icon = loader.icon(
+            'fa-spinner', animation=CIconAnimationSpin(aniButton, 10, 4))
+        aniButton.setIcon(icon)
+        layout.addWidget(QLabel('动画', self), 4, 0)
+        layout.addWidget(aniButton, 4, 1)
+
 
 class Window(QMainWindow):
 
     def __init__(self, *args, **kwargs):
         super(Window, self).__init__(*args, **kwargs)
+        self.resize(800, 600)
         self.tabWidget = QTabWidget(self)
         self.setCentralWidget(self.tabWidget)
         self.setStatusBar(QStatusBar(self))
