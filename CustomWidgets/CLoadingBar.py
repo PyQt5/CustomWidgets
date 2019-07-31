@@ -9,25 +9,14 @@ Created on 2019年7月30日
 @file: CustomWidgets.CLoadingBar
 @description: 加载条
 """
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor
+from PyQt5.QtCore import Qt, QRectF, pyqtProperty, QPropertyAnimation,\
+    QEasingCurve
+from PyQt5.QtGui import QColor, QPainter
 from PyQt5.QtWidgets import QProgressBar
 
 
 __Author__ = 'Irony'
 __Copyright__ = 'Copyright (c) 2019'
-
-Style = """
-QProgressBar {
-    border: none;
-    border-radius: 2px;
-    background-color: transparent;
-}
-QProgressBar::chunk {
-    border-radius: 2px;
-    background-color: %s;
-}
-"""
 
 
 class CLoadingBar(QProgressBar):
@@ -43,12 +32,48 @@ class CLoadingBar(QProgressBar):
 
     def __init__(self, *args, **kwargs):
         super(CLoadingBar, self).__init__(*args, **kwargs)
-        self._height = None
-        self._color = None
-        self._failedColor = None
-        self._direction = None
+        self._height = None         # 进度条高度
+        self._color = None          # 正常颜色
+        self._failedColor = None    # 失败颜色
+        self._direction = None      # 进度条位置（上下）
+        self._alpha = 255           # 透明度
+        self.isError = False        # 是否错误
         self.setOrientation(Qt.Horizontal)
         self.setTextVisible(False)
+        self.animation = QPropertyAnimation(
+            self, b'alpha', self, loopCount=1, duration=1000)
+        self.animation.setEasingCurve(QEasingCurve.SineCurve)
+        self.animation.setStartValue(0)
+        self.animation.setEndValue(255)
+
+    @pyqtProperty(int)
+    def alpha(self):
+        return self._alpha
+
+    @alpha.setter
+    def alpha(self, alpha):
+        self._alpha = alpha
+        QProgressBar.update(self)
+
+    def paintEvent(self, _):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
+        painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+        # 背景
+        painter.fillRect(self.rect(), Qt.transparent)
+        # 进度块
+        ratio = (self.value() - self.minimum()) / \
+            (self.maximum() - self.minimum())
+        width = self.rect().width() * ratio
+        if self.isError:
+            color = QColor(self._failedColor or CLoadingBar.FailedColor)
+        else:
+            color = QColor(self._color or CLoadingBar.Color)
+        color.setAlpha(self._alpha)
+        painter.setBrush(color)
+        painter.setPen(Qt.NoPen)
+        painter.drawRoundedRect(QRectF(0, 0, width, self.height()), 2, 2)
 
     def eventFilter(self, obj, event):
         if event.type() == event.Resize:
@@ -92,8 +117,6 @@ class CLoadingBar(QProgressBar):
         """
         if parent not in CLoadingBar.Instances:
             widget = CLoadingBar(parent)
-            widget.setStyleSheet(
-                Style % (widget._color or CLoadingBar.Color).name())
             CLoadingBar.Instances[parent] = widget
             # 对父控件安装事件过滤器
             parent.installEventFilter(widget)
@@ -104,6 +127,7 @@ class CLoadingBar(QProgressBar):
         widget._failedColor = failedColor
         widget._direction = direction
         widget.setRange(minimum, maximum)
+        widget.setValue(minimum)
         direction = widget._direction or CLoadingBar.Direction
         height = widget._height or CLoadingBar.Height
         widget.setGeometry(
@@ -115,17 +139,27 @@ class CLoadingBar(QProgressBar):
     def finish(cls, parent):
         if parent not in CLoadingBar.Instances:
             return
-        CLoadingBar.Instances[parent].hide()
+        widget = CLoadingBar.Instances[parent]
+        widget._alpha = 255
+        widget.isError = False
+        widget.setValue(widget.maximum())
+        widget.animation.start()
 
     @classmethod
     def error(cls, parent):
         if parent not in CLoadingBar.Instances:
             return
-        CLoadingBar.Instances[parent].hide()
+        widget = CLoadingBar.Instances[parent]
+        widget._alpha = 255
+        widget.isError = True
+        widget.setValue(widget.maximum())
+        widget.animation.start()
 
     @classmethod
     def update(cls, parent, value):
         if parent in CLoadingBar.Instances:
             widget = CLoadingBar.Instances[parent]
+            widget._alpha = 255
+            widget.isError = False
             widget.show()
             widget.setValue(value)

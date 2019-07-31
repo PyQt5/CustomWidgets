@@ -24,7 +24,7 @@ class Window(QWidget):
 
     def __init__(self, *args, **kwargs):
         super(Window, self).__init__(*args, **kwargs)
-        self.resize(800, 600)
+        self.resize(600, 200)
         layout = QVBoxLayout(self)
 
         # 配置全局属性（也可以通过start方法里的参数配置单独的属性）
@@ -32,10 +32,10 @@ class Window(QWidget):
             height=2, direction=CLoadingBar.TOP,
             color='#2d8cf0', failedColor='#ed4014')
 
-        # 子控件顶部
+        # 子控件顶部进度
         self.widget1 = QWidget(self)
         layout.addWidget(self.widget1)
-        CLoadingBar.start(self.widget1)
+        CLoadingBar.start(self.widget1, color='#19be6b', failedColor='#ff9900')
 
         widget = QWidget(self)
         layoutc = QHBoxLayout(widget)
@@ -44,10 +44,10 @@ class Window(QWidget):
         layoutc.addWidget(QPushButton('错误', self, clicked=self.doError))
         layout.addWidget(widget)
 
-        # 子控件底部
+        # 子控件底部进度
         self.widget2 = QWidget(self)
         layout.addWidget(self.widget2)
-        CLoadingBar.start(self.widget2, direction=CLoadingBar.BOTTOM, height=2)
+        CLoadingBar.start(self.widget2, direction=CLoadingBar.BOTTOM, height=6)
 
         # 模拟进度
         self.updateTimer = QTimeLine(
@@ -84,6 +84,7 @@ class Window(QWidget):
         CLoadingBar.update(self.widget2, value)
         if value == 100:
             self.updateTimer.stop()
+            self.doFinish()
 
 
 if __name__ == '__main__':

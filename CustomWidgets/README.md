@@ -23,3 +23,7 @@
 ## CAvatar
  - [使用方法](../TestCAvatar.py)
  - ![CAvatar](../ScreenShot/CAvatar.gif)
+
+## CLoadingBar
+ - [使用方法](../TestCLoadingBar.py)
+ - ![CLoadingBar](../ScreenShot/CLoadingBar.gif)
