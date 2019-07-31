@@ -27,3 +27,7 @@
 ## CLoadingBar
  - [使用方法](../TestCLoadingBar.py)
  - ![CLoadingBar](../ScreenShot/CLoadingBar.gif)
+
+## CCountUp
+ - [使用方法](../TestCCountUp.py)
+ - ![CCountUp](../ScreenShot/CCountUp.gif)

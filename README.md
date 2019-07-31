@@ -12,6 +12,7 @@ PyQt Custom Widgets - PyQt 自定义控件
  - [CDrawer　　　　　　侧边栏抽屉控件](CustomWidgets/#CDrawer)
  - [CAvatar　　　　　 　头像控件](CustomWidgets/#CAvatar)
  - [CLoadingBar　　　　加载条](CustomWidgets/#CLoadingBar)
+ - [CCountUp　　　　　数字动画](CustomWidgets/#CCountUp)
 
 ## QQ群
 
