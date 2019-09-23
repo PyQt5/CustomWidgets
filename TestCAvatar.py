@@ -37,6 +37,10 @@ class Window(QWidget):
         layout.addWidget(CAvatar(
             self, shape=CAvatar.Rectangle, url='TestData/example-3.jpg', size=QSize(48, 48)))
 
+        # 本地gif, 不支持animation
+        layout.addWidget(CAvatar(
+            self, shape=CAvatar.Circle, url='TestData/example-1.gif'))
+
         # 网络头像
         layout.addWidget(CAvatar(
             self, shape=CAvatar.Rectangle,
@@ -48,6 +52,10 @@ class Window(QWidget):
         layout.addWidget(CAvatar(
             self, shape=CAvatar.Rectangle,
             url='https://www.thiswaifudoesnotexist.net/example.jpg'))
+        # 加载网络gif
+        layout.addWidget(CAvatar(
+            self, shape=CAvatar.Rectangle, size=CAvatar.SizeLarge,
+            url='https://n.sinaimg.cn/tech/transform/761/w404h357/20190923/d71b-iewtena6804980.gif'))
 
 
 if __name__ == '__main__':

@@ -13,7 +13,7 @@ import os
 
 from PyQt5.QtCore import QUrl, QRectF, Qt, QSize, QTimer, QPropertyAnimation,\
     QPointF, pyqtProperty
-from PyQt5.QtGui import QPixmap, QColor, QPainter, QPainterPath
+from PyQt5.QtGui import QPixmap, QColor, QPainter, QPainterPath, QMovie
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkDiskCache,\
     QNetworkRequest
 from PyQt5.QtWidgets import QWidget, qApp
@@ -40,8 +40,10 @@ class CAvatar(QWidget):
         self._angle = 0             # 角度
         self.pradius = 0            # 加载进度条半径
         self.animation = animation  # 是否使用动画
+        self._movie = None          # 动态图
         self._pixmap = QPixmap()    # 图片对象
         self.pixmap = QPixmap()     # 被绘制的对象
+        self.isGif = url.endswith('.gif')
         # 进度动画定时器
         self.loadingTimer = QTimer(self, timeout=self.onLoading)
         # 旋转动画
@@ -92,7 +94,7 @@ class CAvatar(QWidget):
         """鼠标进入动画
         :param event:
         """
-        if not self.animation:
+        if not (self.animation and not self.isGif):
             return
         self.rotateAnimation.stop()
         cv = self.rotateAnimation.currentValue() or self.StartAngle
@@ -106,7 +108,7 @@ class CAvatar(QWidget):
         """鼠标离开动画
         :param event:
         """
-        if not self.animation:
+        if not (self.animation and not self.isGif):
             return
         self.rotateAnimation.stop()
         cv = self.rotateAnimation.currentValue() or self.EndAngle
@@ -132,14 +134,21 @@ class CAvatar(QWidget):
         self.loadingTimer.stop()
         self.pradius = 0
         reply = self.sender()
-        data = reply.readAll().data()
-        reply.deleteLater()
-        del reply
-        self._pixmap.loadFromData(data)
-        if self._pixmap.isNull():
-            self._pixmap = QPixmap(self.size())
-            self._pixmap.fill(QColor(204, 204, 204))
-        self._resizePixmap()
+
+        if self.isGif:
+            self._movie = QMovie(reply, b'gif', self)
+            if self._movie.isValid():
+                self._movie.frameChanged.connect(self._resizeGifPixmap)
+                self._movie.start()
+        else:
+            data = reply.readAll().data()
+            reply.deleteLater()
+            del reply
+            self._pixmap.loadFromData(data)
+            if self._pixmap.isNull():
+                self._pixmap = QPixmap(self.size())
+                self._pixmap.fill(QColor(204, 204, 204))
+            self._resizePixmap()
 
     def onError(self, code):
         """下载出错了
@@ -206,6 +215,14 @@ class CAvatar(QWidget):
                 self.width(), self.height(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
         self.update()
 
+    def _resizeGifPixmap(self, _):
+        """缩放动画图片
+        """
+        if self._movie:
+            self.pixmap = self._movie.currentPixmap().scaled(
+                self.width(), self.height(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        self.update()
+
     def _initNetWork(self):
         """初始化异步网络库
         """
@@ -245,8 +262,14 @@ class CAvatar(QWidget):
             return
         self.pradius = 0
         if os.path.exists(url) and os.path.isfile(url):
-            self._pixmap = QPixmap(url)
-            self._resizePixmap()
+            if self.isGif:
+                self._movie = QMovie(url, parent=self)
+                if self._movie.isValid():
+                    self._movie.frameChanged.connect(self._resizeGifPixmap)
+                    self._movie.start()
+            else:
+                self._pixmap = QPixmap(url)
+                self._resizePixmap()
         else:
             self.onError('')
 
