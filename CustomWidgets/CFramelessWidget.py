@@ -116,7 +116,7 @@ class CFramelessBase:
         """鼠标按下设置标志
         :param event:
         """
-        if not self.isResizable():
+        if not self.isResizable() or self.childAt(event.pos()):
             return
         self.dragParams['x'] = event.x()
         self.dragParams['y'] = event.y()
